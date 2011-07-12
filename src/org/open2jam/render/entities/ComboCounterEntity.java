@@ -1,6 +1,9 @@
 package org.open2jam.render.entities;
 
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.equations.*;
 import java.util.Collection;
+import org.open2jam.render.Render;
 
 /**
  *
@@ -31,6 +34,8 @@ public class ComboCounterEntity extends NumberEntity
     private int count_threshold = 0;
 
     private Entity title_sprite = null;
+    
+    private Tween tween;
 
     public ComboCounterEntity(Collection<Entity> list, Entity title, double x, double y)
     {
@@ -45,6 +50,7 @@ public class ComboCounterEntity extends NumberEntity
     {
         base_x = x;
         base_y = y;
+        super.setPos(x, y);
         if(title_sprite == null)return;
         title_sprite.setPos(x, y);
     }
@@ -53,14 +59,17 @@ public class ComboCounterEntity extends NumberEntity
     public void incNumber()
     {
         super.incNumber();
-        y = base_y + wobble;
+//        y = base_y + wobble;
         to_show = show_time;
+        
+        tween = Tween.to(this, Entity.X, 20, Linear.INOUT).target((float)base_x, (float)base_x+wobble,(float)base_x);
+        Render.tweenManager.add(tween.start());
     }
 
     public void resetNumber()
     {
         number = 0;
-        y = base_y + wobble;
+//        y = base_y + wobble;
         to_show = 0;
     }
 
@@ -75,7 +84,7 @@ public class ComboCounterEntity extends NumberEntity
         super.move(delta);
         if(title_sprite != null) title_sprite.move(delta);
         to_show -= delta;
-        if(y > base_y)y += delta * wobble_dy;
+//        if(y > base_y)y += delta * wobble_dy;
     }
 
     @Override

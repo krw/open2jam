@@ -4,8 +4,15 @@ import org.open2jam.util.Copyable;
 import org.open2jam.render.Sprite;
 import org.open2jam.render.SpriteList;
 
-public class Entity implements Copyable<Entity>
+import aurelienribon.tweenengine.Tweenable;
+
+public class Entity  implements Copyable<Entity>, Tweenable
 {
+    /** tweens types */
+    public static final int X = 1;
+    public static final int Y = 2;
+    public static final int XY = 3;
+    
     SpriteList frames;
     Sprite sprite;
 
@@ -125,5 +132,44 @@ public class Entity implements Copyable<Entity>
     @Override
     public Entity copy() {
         return new Entity(this);
+    }
+
+    @Override
+    public int getTweenValues(int tween, float[] returnValues) {
+        switch(tween)
+        {
+            case X: 
+                returnValues[0] = (float) x;
+                return 1;
+            case Y: 
+                returnValues[0] = (float) y;
+                return 1;
+            case XY:
+                returnValues[0] = (float) x;
+                returnValues[1] = (float) y;
+                return 2;
+            
+                
+            default: assert false; return 0;
+        }
+    }
+
+    @Override
+    public void onTweenUpdated(int tween, float[] newValues) {
+        switch(tween)
+        {
+            case X: 
+                this.setPos(newValues[0], y);
+            break;
+            case Y: 
+                this.setPos(x, newValues[0]);
+            break;
+            case XY:
+                this.setPos(newValues[0], newValues[1]);
+            break;
+            
+                
+            default: assert false; break;
+        }
     }
 }

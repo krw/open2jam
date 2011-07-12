@@ -1,6 +1,7 @@
 
 package org.open2jam.render;
 
+import aurelienribon.tweenengine.TweenManager;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.net.URL;
@@ -211,6 +212,8 @@ public abstract class Render implements GameWindowCallback
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
     }
     
+    public static TweenManager tweenManager = new TweenManager();
+    
     Render(Chart chart, GameOptions opt, DisplayMode dm)
     {
         keyboard_map = Config.getKeyboardMap(Config.KeyboardType.K7);
@@ -392,7 +395,7 @@ public abstract class Render implements GameWindowCallback
             for(int i=0;i<MAX_SOURCES;i++)
                 source_queue.push(SoundManager.newSource()); // creates sources
         }catch(org.lwjgl.openal.OpenALException e){
-            Logger.global.log(Level.WARNING, "Couldn''t create enough sources({0})", MAX_SOURCES);
+            Logger.global.log(Level.WARNING, "Couldn't create enough sources({0})", MAX_SOURCES);
         }
 
         source_queue_iterator = source_queue.iterator();
@@ -455,13 +458,15 @@ public abstract class Render implements GameWindowCallback
         check_misc_keyboard();
         
         changeSpeed(delta); // TODO: is everything here really needed every frame ?
+        
+        tweenManager.update();
 
         now = SystemTimer.getTime() - start_time;
         update_note_buffer(now);
 
         now = SystemTimer.getTime() - start_time;
 
-	    if(opt.getAutoplay())do_autoplay(now);
+	if(opt.getAutoplay())do_autoplay(now);
         else check_keyboard(now);
 
         for(LinkedList<Entity> layer : entities_matrix) // loop over layers
